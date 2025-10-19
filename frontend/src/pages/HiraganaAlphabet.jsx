@@ -28,6 +28,9 @@ const HiraganaAlphabet = () => {
 
   const [quiz, setQuiz] = useState(hiraganaRomanji)
 
+  const [currentPair, setCurrentPair] = useState()
+
+
   const handleToggle = (index) => {
 
     setSelected((prev) => prev.map((on, i) => (i === index ? !on : on))); 
@@ -38,6 +41,7 @@ const HiraganaAlphabet = () => {
     const filtered = hiraganaChart.filter((_, index) => selected[index] != false);
 
     setQuiz(filtered) 
+    
   },[selected])
 
 
@@ -106,10 +110,27 @@ const HiraganaAlphabet = () => {
     );
   };
 
+  const selectCharacter = (data)=>{
+
+    const row = getRandomInt(data.length)
+    const col = getRandomInt(data[row].length)
+ 
+    setCurrentPair(data[row][col])
+    console.log(data[row][col])
+    return data[row][col]
+  }
+
+  useEffect(()=>{
+
+    if(quizMode){
+      selectCharacter(quiz)
+    }
+  },[quizMode])
+
   if(quizMode){
     return(
       <>
-      <p className='text-2xl font-semibold text-center my-4 bg-gray-500 p-1'>asd{quiz.length}</p>
+      <p className='text-2xl font-semibold text-center my-4 bg-gray-500 p-1'>asd{currentPair}</p>
       <button className='text-2xl font-semibold text-center my-4 bg-gray-500 p-1'
         onClick={()=>{quizMode?(setQuizMode(false)):(setQuizMode(true))}}
       >
@@ -122,7 +143,9 @@ const HiraganaAlphabet = () => {
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
-  
+
+
+
   return (
     <>
       <div className="text-2xl font-semibold text-center my-4 text-gray-200">
