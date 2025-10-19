@@ -8,6 +8,12 @@ const HiraganaAlphabet = () => {
 
     return (
       <div className="grid grid-rows-6 gap-2 min-w-[100px] items-center">
+
+        {/* Section Label (like K, S, T...) */}
+        <div className="text-center font-bold text-lg text-gray-400">
+          {Object.values(chars)[0][0].toUpperCase()}
+        </div>
+
         {/* Centered Toggle Switch */}
         <div className="flex justify-center">
           <div
@@ -31,19 +37,25 @@ const HiraganaAlphabet = () => {
           );
 
           return (
-            <p
+            <div
               key={i}
-              className="bg-gray-900 text-white p-2 text-center rounded transition-opacity duration-300"
+              className="bg-gray-900 text-white p-2 text-center rounded transition-opacity duration-300 flex flex-col items-center"
               style={{ opacity: isOn ? 1 : 0.15 }}
             >
-              {match ? `${match[0]}: ${match[1]}` : ''}
-            </p>
+              {match ? (
+                <>
+                  <span className="text-2xl mb-1 text-yellow-100">{match[0]}</span> {/* Hiragana */}
+                  <span className="text-sm text-gray-400">{match[1]}</span> {/* Romaji */}
+                </>
+              ) : (
+                <span>&nbsp;</span> // keeps spacing even if empty
+              )}
+            </div>
           );
         })}
       </div>
     );
   };
-
   const hiraganaRomanji = [
     { あ: 'a', い: 'i', う: 'u', え: 'e', お: 'o' },
     { か: 'ka', き: 'ki', く: 'ku', け: 'ke', こ: 'ko' },
