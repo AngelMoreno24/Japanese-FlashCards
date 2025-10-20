@@ -112,13 +112,48 @@ const HiraganaAlphabet = () => {
 
   const selectCharacter = (data)=>{
 
-    const row = getRandomInt(data.length)
-    const col = getRandomInt(data[row].length)
- 
-    setCurrentPair(data[row][col])
-    console.log(data[row][col])
-    return data[row][col]
+      console.log(quiz)
+    if(data.length==0){
+      const filtered = hiraganaChart.filter((_, index) => selected[index] != false);
+      setQuiz(filtered) 
+      console.log("reset")
+      return;
+    }
+    if(data.length[0]==0){
+      const filtered = hiraganaChart.filter((_, index) => selected[index] != false);
+      setQuiz(filtered)       
+      console.log("reset")
+
+      return;
+    }
+
+    var row = getRandomInt(data.length)
+    var col = getRandomInt(data[row].length)
+    while(!data[row][col] || data[row].length == 0){
+      
+      row = getRandomInt(data.length)
+      col = getRandomInt(data[row].length)
+    
+    }
+    const newChart = data.map(rows => [...rows]);
+    const [info] = newChart[row].splice(col, 1); // remove and return that pair
+
+    setQuiz(newChart);
+    setCurrentPair(info);
   }
+
+  useEffect(()=>{
+
+    if(quiz){ 
+      for(let i=0; i<quiz.length; i++ ){
+
+        if(quiz[i].length==0){
+
+          quiz.splice(i,1)
+        }
+      }
+    }
+  },[quiz])
 
   useEffect(()=>{
 
@@ -131,6 +166,12 @@ const HiraganaAlphabet = () => {
     return(
       <>
       <p className='text-2xl font-semibold text-center my-4 bg-gray-500 p-1'>asd{currentPair}</p>
+      
+      <p className='text-2xl font-semibold text-center my-4 bg-green-500 p-1'
+        onClick={()=>{selectCharacter(quiz)}}
+      >
+        next
+      </p>
       <button className='text-2xl font-semibold text-center my-4 bg-gray-500 p-1'
         onClick={()=>{quizMode?(setQuizMode(false)):(setQuizMode(true))}}
       >
