@@ -37,11 +37,19 @@ const HiraganaAlphabet = () => {
   }
 
   useEffect(() => {
+  const filteredKeys = hiraganaChart.flat().map(pair => pair[0]);
+  console.log(filteredKeys);
 
-    const filtered = hiraganaChart.filter((_, index) => selected[index] != false);
+ 
+    
+    const filtered = hiraganaChart.filter((_, index) => {(selected[index] != false)});
+ 
 
     setQuiz(filtered) 
-    
+    if(quizMode){
+      
+    selectCharacter(quiz)
+    }
   },[selected])
 
 
@@ -154,20 +162,24 @@ const HiraganaAlphabet = () => {
       }
     }
   },[quiz])
-
-  useEffect(()=>{
-
-    if(quizMode){
-      selectCharacter(quiz)
+ 
+  useEffect(() => {
+    if (quizMode && quiz.length > 0) {
+      selectCharacter(quiz);
     }
-  },[quizMode])
+  }, [quizMode]);
 
   if(quizMode){
     return(
       <>
-      <p className='text-2xl font-semibold text-center my-4 bg-gray-500 p-1'>asd{currentPair}</p>
-      
-      <p className='text-2xl font-semibold text-center my-4 bg-green-500 p-1'
+      <p className='text-2xl font-semibold text-center my-4 bg-gray-500 p-4 w-64 mx-auto h-20'>{currentPair}</p>
+      <input type="text" className='block  bg-gray-700 text-center rounded-2xl w-64 mx-auto h-20 text-2xl p-4'/>
+      <p className='text-2xl font-semibold text-center my-4 bg-green-500 p-1 w-64 mx-auto'
+        onClick={()=>{selectCharacter(quiz)}}
+      >
+        next
+      </p>
+      <p className='text-2xl font-semibold text-center my-4 bg-green-500 p-1 w-64 mx-auto'
         onClick={()=>{selectCharacter(quiz)}}
       >
         next
@@ -195,8 +207,14 @@ const HiraganaAlphabet = () => {
       <Column />
 
       <button className='text-2xl font-semibold text-center my-4 bg-green-600 p-4 rounded-2xl'
-        onClick={()=>{quizMode?(setQuizMode(false)):(setQuizMode(true))}}
-      >
+        onClick={() => {
+          if (!quizMode) {
+            // Before entering quiz mode, select the first character
+            selectCharacter(quiz);
+          }
+          setQuizMode(!quizMode);
+        }}      
+        >
         quizMode
       </button>
     </>
