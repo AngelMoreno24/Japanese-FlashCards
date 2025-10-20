@@ -30,6 +30,9 @@ const HiraganaAlphabet = () => {
 
   const [currentPair, setCurrentPair] = useState()
 
+  const [inputValue, setInputValue] = useState(''); // Initialize with an empty string
+
+  const [remaining, setRemaining] = useState(20); // Initialize with an empty string
 
   const handleToggle = (index) => {
 
@@ -168,17 +171,41 @@ const HiraganaAlphabet = () => {
       selectCharacter(quiz);
     }
   }, [quizMode]);
+ 
+  
+  useEffect(() => {
+    if(inputValue){
+
+      if (inputValue.length == currentPair[1].length) {
+        
+        if (inputValue == currentPair[1]) {
+          console.log("correct")
+          setInputValue("")
+          //reduce remaining by 1
+          setRemaining(remaining-1);
+          selectCharacter(quiz)
+        }else{
+          
+          console.log("wrong")
+          setInputValue("")
+        }
+      }
+    }
+  }, [inputValue]);
+
 
   if(quizMode){
     return(
       <>
-      <p className='text-2xl font-semibold text-center my-4 bg-gray-500 p-4 w-64 mx-auto h-20'>{currentPair}</p>
-      <input type="text" className='block  bg-gray-700 text-center rounded-2xl w-64 mx-auto h-20 text-2xl p-4'/>
-      <p className='text-2xl font-semibold text-center my-4 bg-green-500 p-1 w-64 mx-auto'
-        onClick={()=>{selectCharacter(quiz)}}
-      >
-        next
-      </p>
+      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto h-20'>remaining: {remaining}</p>
+
+      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto h-20'>{currentPair}</p>
+      <input type="text" className='block  bg-gray-700 text-center rounded-2xl w-64 mx-auto h-20 text-2xl p-4'
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+
+      />
+      
       <p className='text-2xl font-semibold text-center my-4 bg-green-500 p-1 w-64 mx-auto'
         onClick={()=>{selectCharacter(quiz)}}
       >
