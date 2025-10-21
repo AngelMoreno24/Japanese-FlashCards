@@ -37,6 +37,24 @@ const HiraganaAlphabet = () => {
     ば: 'ba', び: 'bi', ぶ: 'bu', べ: 'be', ぼ: 'bo',
     ぱ: 'pa', ぴ: 'pi', ぷ: 'pu', ぺ: 'pe', ぽ: 'po'
   };
+    
+  const romanjiToHiragana = {
+    a: 'あ', i: 'い', u: 'う', e: 'え', o: 'お',
+    ka: 'か', ki: 'き', ku: 'く', ke: 'け', ko: 'こ',
+    sa: 'さ', shi: 'し', su: 'す', se: 'せ', so: 'そ',
+    ta: 'た', chi: 'ち', tsu: 'つ', te: 'て', to: 'と',
+    na: 'な', ni: 'に', nu: 'ぬ', ne: 'ね', no: 'の',
+    ha: 'は', hi: 'ひ', fu: 'ふ', he: 'へ', ho: 'ほ',
+    ma: 'ま', mi: 'み', mu: 'む', me: 'め', mo: 'も',
+    ya: 'や', yu: 'ゆ', yo: 'よ',
+    ra: 'ら', ri: 'り', ru: 'る', re: 'れ', ro: 'ろ',
+    wa: 'わ', wo: 'を', n: 'ん',
+    ga: 'が', gi: 'ぎ', gu: 'ぐ', ge: 'げ', go: 'ご',
+    za: 'ざ', ji: 'じ', zu: 'ず', ze: 'ぜ', zo: 'ぞ',
+    da: 'だ', di: 'ぢ', du: 'づ', de: 'で', do: 'ど',
+    ba: 'ば', bi: 'び', bu: 'ぶ', be: 'べ', bo: 'ぼ',
+    pa: 'ぱ', pi: 'ぴ', pu: 'ぷ', pe: 'ぺ', po: 'ぽ'
+  };
 
   const [selected, setSelected] = useState(hiraganaRomanji.map(() => true))
 
@@ -178,23 +196,32 @@ console.log(info)
   }, [quizMode]);
  
   
+
+  const reveal = () => {
+    setRevealStatus(prev => !prev);
+  };
+  
+  const [revealStatus,setRevealStatus] = useState(false)
   useEffect(() => {
     if(inputValue){
 
-      if (inputValue.length == hiraganaToRomanji[currentPair].length) {
-        
-        if (inputValue == hiraganaToRomanji[currentPair]) {
-          console.log("correct")
-          setInputValue("")
-          //reduce remaining by 1
-          setRemaining(remaining-1);
-          selectCharacter(quiz)
-        }else{
+
+        if (inputValue.length == hiraganaToRomanji[currentPair].length) {
           
-          console.log("wrong")
-          setInputValue("")
+          if (inputValue == hiraganaToRomanji[currentPair]) {
+            console.log("correct")
+            setInputValue("")
+            //reduce remaining by 1
+            setRemaining(remaining-1);
+            selectCharacter(quiz)
+          }else{
+            
+            console.log("wrong")
+            setInputValue("")
+          }
         }
-      }
+
+
     }
   }, [inputValue]);
 
@@ -204,18 +231,34 @@ console.log(info)
       <>
       <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto h-auto rounded-2xl'>remaining: {remaining}</p>
 
-      <p className='text-4xl font-semibold text-center my-4  p-4 w-64 mx-auto h-20'>{currentPair}</p>
+      <p className='text-4xl font-semibold text-center my-4 p-4 w-64 mx-auto h-20'>
+        {revealStatus ? hiraganaToRomanji[currentPair] : currentPair}
+      </p>
+      
       <input type="text" className='block  bg-gray-700 text-center rounded-2xl w-64 mx-auto h-auto text-2xl p-4'
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
 
       />
       
+      {revealStatus==true?
+      (
       <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-2 w-24 mx-auto h-auto rounded-2xl'
-        onClick={()=>{selectCharacter(quiz)}}
+        onClick={()=>{reveal()}}
+      >
+        hide
+      </p>
+
+      ):(
+
+      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-2 w-24 mx-auto h-auto rounded-2xl'
+        onClick={()=>{reveal()}}
       >
         reveal
       </p>
+      )
+
+      }
        
       </>
     )
