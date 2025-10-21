@@ -202,25 +202,21 @@ console.log(info)
   if(quizMode){
     return(
       <>
-      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto h-20'>remaining: {remaining}</p>
+      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto h-auto rounded-2xl'>remaining: {remaining}</p>
 
-      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto h-20'>{currentPair}</p>
-      <input type="text" className='block  bg-gray-700 text-center rounded-2xl w-64 mx-auto h-20 text-2xl p-4'
+      <p className='text-4xl font-semibold text-center my-4  p-4 w-64 mx-auto h-20'>{currentPair}</p>
+      <input type="text" className='block  bg-gray-700 text-center rounded-2xl w-64 mx-auto h-auto text-2xl p-4'
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
 
       />
       
-      <p className='text-2xl font-semibold text-center my-4 bg-green-500 p-1 w-64 mx-auto'
+      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-2 w-24 mx-auto h-auto rounded-2xl'
         onClick={()=>{selectCharacter(quiz)}}
       >
-        next
+        reveal
       </p>
-      <button className='text-2xl font-semibold text-center my-4 bg-gray-500 p-1'
-        onClick={()=>{quizMode?(setQuizMode(false)):(setQuizMode(true))}}
-      >
-        exit quizMode
-      </button>
+       
       </>
     )
   }
