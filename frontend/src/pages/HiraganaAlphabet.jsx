@@ -20,7 +20,23 @@ const HiraganaAlphabet = () => {
     { ば: 'ba', び: 'bi', ぶ: 'bu', べ: 'be', ぼ: 'bo' },
     { ぱ: 'pa', ぴ: 'pi', ぷ: 'pu', ぺ: 'pe', ぽ: 'po' }
   ];
-
+  const hiraganaToRomanji = {
+    あ: 'a', い: 'i', う: 'u', え: 'e', お: 'o',
+    か: 'ka', き: 'ki', く: 'ku', け: 'ke', こ: 'ko',
+    さ: 'sa', し: 'shi', す: 'su', せ: 'se', そ: 'so',
+    た: 'ta', ち: 'chi', つ: 'tsu', て: 'te', と: 'to',
+    な: 'na', に: 'ni', ぬ: 'nu', ね: 'ne', の: 'no',
+    は: 'ha', ひ: 'hi', ふ: 'fu', へ: 'he', ほ: 'ho',
+    ま: 'ma', み: 'mi', む: 'mu', め: 'me', も: 'mo',
+    や: 'ya', ゆ: 'yu', よ: 'yo',
+    ら: 'ra', り: 'ri', る: 'ru', れ: 're', ろ: 'ro',
+    わ: 'wa', を: 'wo', ん: 'n',
+    が: 'ga', ぎ: 'gi', ぐ: 'gu', げ: 'ge', ご: 'go',
+    ざ: 'za', じ: 'ji', ず: 'zu', ぜ: 'ze', ぞ: 'zo',
+    だ: 'da', ぢ: 'di', づ: 'du', で: 'de', ど: 'do',
+    ば: 'ba', び: 'bi', ぶ: 'bu', べ: 'be', ぼ: 'bo',
+    ぱ: 'pa', ぴ: 'pi', ぷ: 'pu', ぺ: 'pe', ぽ: 'po'
+  };
 
   const [selected, setSelected] = useState(hiraganaRomanji.map(() => true))
 
@@ -132,25 +148,12 @@ const HiraganaAlphabet = () => {
       console.log("reset")
       return;
     }
-    if(data.length[0]==0){
-      const filtered = hiraganaChart.filter((_, index) => selected[index] != false);
-      setQuiz(filtered)       
-      console.log("reset")
 
-      return;
-    }
+    var randomIndex = getRandomInt(data.length)
 
-    var row = getRandomInt(data.length)
-    var col = getRandomInt(data[row].length)
-    while(!data[row][col] || data[row].length == 0){
-      
-      row = getRandomInt(data.length)
-      col = getRandomInt(data[row].length)
-    
-    }
-    const newChart = data.map(rows => [...rows]);
-    const [info] = newChart[row].splice(col, 1); // remove and return that pair
-
+    var newChart = data.map(rows => [...rows]);
+    var [info] = newChart.splice(randomIndex, 1); // remove and return that pair
+console.log(info)
     setQuiz(newChart);
     setCurrentPair(info);
   }
@@ -178,9 +181,9 @@ const HiraganaAlphabet = () => {
   useEffect(() => {
     if(inputValue){
 
-      if (inputValue.length == currentPair.length) {
+      if (inputValue.length == hiraganaToRomanji[currentPair].length) {
         
-        if (inputValue == currentPair) {
+        if (inputValue == hiraganaToRomanji[currentPair]) {
           console.log("correct")
           setInputValue("")
           //reduce remaining by 1
