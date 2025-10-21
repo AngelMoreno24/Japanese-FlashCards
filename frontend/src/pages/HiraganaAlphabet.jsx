@@ -225,6 +225,25 @@ console.log(info)
     }
   }, [inputValue]);
 
+  useEffect(() => {
+    if (!quizMode) return; // 🚫 don't add listener if quizMode is false
+
+    const handleSpace = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        reveal();
+      }
+    };
+
+    window.addEventListener('keydown', handleSpace);
+    console.log('Spacebar listener active');
+
+    // 🧹 cleanup when quizMode turns false or component unmounts
+    return () => {
+      window.removeEventListener('keydown', handleSpace);
+      console.log('Spacebar listener removed');
+    };
+  }, [quizMode]); // runs whenever quizMode changes
 
   if(quizMode){
     return(
