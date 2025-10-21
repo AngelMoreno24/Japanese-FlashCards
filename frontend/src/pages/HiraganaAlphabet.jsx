@@ -32,7 +32,7 @@ const HiraganaAlphabet = () => {
 
   const [inputValue, setInputValue] = useState(''); // Initialize with an empty string
 
-  const [remaining, setRemaining] = useState(20); // Initialize with an empty string
+  const [remaining, setRemaining] = useState(71); // Initialize with an empty string
 
   const handleToggle = (index) => {
 
@@ -40,17 +40,19 @@ const HiraganaAlphabet = () => {
   }
 
   useEffect(() => {
-  const filteredKeys = hiraganaChart.flat().map(pair => pair[0]);
-  console.log(filteredKeys);
 
  
     
-    const filtered = hiraganaChart.filter((_, index) => {(selected[index] != false)});
+    const filtered = hiraganaChart.filter((_, index) => selected[index] !== false);
  
 
-    setQuiz(filtered) 
+    const filteredKeys = filtered.flat().map(pair => pair[0]);
+    console.log(filteredKeys);
+
+
+    setRemaining(filteredKeys.length)
+    setQuiz(filteredKeys) 
     if(quizMode){
-      
     selectCharacter(quiz)
     }
   },[selected])
@@ -176,9 +178,9 @@ const HiraganaAlphabet = () => {
   useEffect(() => {
     if(inputValue){
 
-      if (inputValue.length == currentPair[1].length) {
+      if (inputValue.length == currentPair.length) {
         
-        if (inputValue == currentPair[1]) {
+        if (inputValue == currentPair) {
           console.log("correct")
           setInputValue("")
           //reduce remaining by 1
