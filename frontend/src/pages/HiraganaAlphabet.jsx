@@ -214,6 +214,7 @@ console.log(info)
             //reduce remaining by 1
             setRemaining(remaining-1);
             selectCharacter(quiz)
+            setRevealStatus(false)
           }else{
             
             console.log("wrong")
