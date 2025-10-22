@@ -56,7 +56,7 @@ const HiraganaAlphabet = () => {
     pa: 'ぱ', pi: 'ぴ', pu: 'ぷ', pe: 'ぺ', po: 'ぽ'
   };
 
-  const [selected, setSelected] = useState(hiraganaRomanji.map(() => true))
+  const [selected, setSelected] = useState(hiraganaRomanji.map(() => false))
 
   const [quizMode, setQuizMode] = useState(false);
 
@@ -67,6 +67,7 @@ const HiraganaAlphabet = () => {
   const [inputValue, setInputValue] = useState(''); // Initialize with an empty string
 
   const [remaining, setRemaining] = useState(71); // Initialize with an empty string
+  const [randomIndex, setRandomIndex] = useState(71); // Initialize with an empty string
 
   const handleToggle = (index) => {
 
@@ -157,24 +158,21 @@ const HiraganaAlphabet = () => {
     );
   };
 
-  const selectCharacter = (data)=>{
-
-      console.log(quiz)
-    if(data.length==0){
-      const filtered = hiraganaChart.filter((_, index) => selected[index] != false);
-      setQuiz(filtered) 
-      console.log("reset")
+  const selectCharacter = (data) => {
+    if (!data || data.length === 0) {
+      // Reset quiz
+      const filtered = hiraganaChart.filter((_, index) => selected[index] !== false);
+      const filteredKeys = filtered.flat().map(pair => pair[0]);
+      setQuiz(filteredKeys);
+      setRemaining(filteredKeys.length);
+      console.log("reset");
       return;
     }
 
-    var randomIndex = getRandomInt(data.length)
-
-    var newChart = data.map(rows => [...rows]);
-    var [info] = newChart.splice(randomIndex, 1); // remove and return that pair
-console.log(info)
-    setQuiz(newChart);
-    setCurrentPair(info);
-  }
+    const index = getRandomInt(data.length);
+    setRandomIndex(index);
+    setCurrentPair(data[index]);
+  };
 
   useEffect(()=>{
 
@@ -203,26 +201,30 @@ console.log(info)
   
   const [revealStatus,setRevealStatus] = useState(false)
   useEffect(() => {
-    if(inputValue){
+    if (inputValue && currentPair) {
+      const answer = hiraganaToRomanji[currentPair];
+      if (inputValue.length === answer.length) {
+        if (inputValue === answer) {
+          console.log("✅ correct");
+          setInputValue("");
 
+          // remove current character from quiz
+          const newChart = quiz.filter((_, i) => i !== randomIndex);
+          setQuiz(newChart);
+          setRemaining(newChart.length);
+          setRevealStatus(false);
 
-        if (inputValue.length == hiraganaToRomanji[currentPair].length) {
-          
-          if (inputValue == hiraganaToRomanji[currentPair]) {
-            console.log("correct")
-            setInputValue("")
-            //reduce remaining by 1
-            setRemaining(remaining-1);
-            selectCharacter(quiz)
-            setRevealStatus(false)
-          }else{
-            
-            console.log("wrong")
-            setInputValue("")
+          // choose next or reset
+          if (newChart.length > 0) {
+            selectCharacter(newChart);
+          } else {
+            selectCharacter([]); // triggers reset
           }
+        } else {
+          console.log("❌ wrong");
+          setInputValue("");
         }
-
-
+      }
     }
   }, [inputValue]);
 
