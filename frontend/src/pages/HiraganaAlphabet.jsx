@@ -61,7 +61,10 @@ const HiraganaAlphabet = () => {
     ba: 'ば', bi: 'び', bu: 'ぶ', be: 'べ', bo: 'ぼ',
     pa: 'ぱ', pi: 'ぴ', pu: 'ぷ', pe: 'ぺ', po: 'ぽ'
   };
-  const [selected, setSelected] = useState(hiraganaRomanji.map(() => false));
+  const [selected, setSelected] = useState(() => {
+    const saved = localStorage.getItem("selectedHiragana");
+    return saved ? JSON.parse(saved) : Array(hiraganaRomanji.length).fill(true);
+  });
   const [quizMode, setQuizMode] = useState(false);
   const [quiz, setQuiz] = useState([]);
   const [currentPair, setCurrentPair] = useState(null);
@@ -81,6 +84,8 @@ const HiraganaAlphabet = () => {
     const filteredKeys = filtered.flat().map(pair => pair[0]);
     setRemaining(filteredKeys.length);
     setQuiz(filteredKeys);
+
+    localStorage.setItem("selectedHiragana", JSON.stringify(selected));
   }, [selected]);
 
   const selectCharacter = (data) => {
