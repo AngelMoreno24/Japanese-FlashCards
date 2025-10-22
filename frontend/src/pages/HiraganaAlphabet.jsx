@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { hiraganaChart } from './HiraganaChart';
 
 const HiraganaAlphabet = () => {
- 
   const hiraganaRomanji = [
     { あ: 'a', い: 'i', う: 'u', え: 'e', お: 'o' },
     { か: 'ka', き: 'ki', く: 'ku', け: 'ke', こ: 'ko' },
@@ -13,13 +12,20 @@ const HiraganaAlphabet = () => {
     { ま: 'ma', み: 'mi', む: 'mu', め: 'me', も: 'mo' },
     { や: 'ya', ゆ: 'yu', よ: 'yo' },
     { ら: 'ra', り: 'ri', る: 'ru', れ: 're', ろ: 'ro' },
-    { わ: 'wa', を: 'wo', ん: 'n' },
+    { わ: 'wa', を: 'wo' },
+    { ん: 'n' },
     { が: 'ga', ぎ: 'gi', ぐ: 'gu', げ: 'ge', ご: 'go' },
     { ざ: 'za', じ: 'ji', ず: 'zu', ぜ: 'ze', ぞ: 'zo' },
     { だ: 'da', ぢ: 'di', づ: 'du', で: 'de', ど: 'do' },
     { ば: 'ba', び: 'bi', ぶ: 'bu', べ: 'be', ぼ: 'bo' },
     { ぱ: 'pa', ぴ: 'pi', ぷ: 'pu', ぺ: 'pe', ぽ: 'po' }
   ];
+
+  // Column titles in order, easy to change
+  const columnTitles = [
+    'A', 'K', 'S', 'T', 'N', 'H', 'M', 'Y', 'R', 'W', 'N', 'G', 'Z', 'D', 'B', 'P'
+  ];
+
   const hiraganaToRomanji = {
     あ: 'a', い: 'i', う: 'u', え: 'e', お: 'o',
     か: 'ka', き: 'ki', く: 'ku', け: 'ke', こ: 'ko',
@@ -55,92 +61,160 @@ const HiraganaAlphabet = () => {
     ba: 'ば', bi: 'び', bu: 'ぶ', be: 'べ', bo: 'ぼ',
     pa: 'ぱ', pi: 'ぴ', pu: 'ぷ', pe: 'ぺ', po: 'ぽ'
   };
-
-  const [selected, setSelected] = useState(hiraganaRomanji.map(() => false))
-
+  const [selected, setSelected] = useState(hiraganaRomanji.map(() => false));
   const [quizMode, setQuizMode] = useState(false);
+  const [quiz, setQuiz] = useState([]);
+  const [currentPair, setCurrentPair] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [remaining, setRemaining] = useState(0);
+  const [randomIndex, setRandomIndex] = useState(null);
+  const [revealStatus, setRevealStatus] = useState(false);
 
-  const [quiz, setQuiz] = useState(hiraganaRomanji)
-
-  const [currentPair, setCurrentPair] = useState()
-
-  const [inputValue, setInputValue] = useState(''); // Initialize with an empty string
-
-  const [remaining, setRemaining] = useState(71); // Initialize with an empty string
-  const [randomIndex, setRandomIndex] = useState(71); // Initialize with an empty string
+  const getRandomInt = (max) => Math.floor(Math.random() * max);
 
   const handleToggle = (index) => {
-
-    setSelected((prev) => prev.map((on, i) => (i === index ? !on : on))); 
-  }
+    setSelected(prev => prev.map((on, i) => (i === index ? !on : on)));
+  };
 
   useEffect(() => {
-
- 
-    
     const filtered = hiraganaChart.filter((_, index) => selected[index] !== false);
- 
-
     const filteredKeys = filtered.flat().map(pair => pair[0]);
-    console.log(filteredKeys);
+    setRemaining(filteredKeys.length);
+    setQuiz(filteredKeys);
+  }, [selected]);
 
+  const selectCharacter = (data) => {
+    if (!data || data.length === 0) return;
+    const index = getRandomInt(data.length);
+    setRandomIndex(index);
+    setCurrentPair(data[index]);
+  };
 
-    setRemaining(filteredKeys.length)
-    setQuiz(filteredKeys) 
-    if(quizMode){
-    selectCharacter(quiz)
+  const startQuiz = () => {
+    const filtered = hiraganaChart.filter((_, index) => selected[index] !== false);
+    const filteredKeys = filtered.flat().map(pair => pair[0]);
+    setQuiz(filteredKeys);
+    setRemaining(filteredKeys.length);
+    setQuizMode(true);
+    setInputValue('');
+    setRevealStatus(false);
+    setCurrentPair(null);
+  };
+
+  useEffect(() => {
+    if (quizMode && quiz.length > 0 && !currentPair) selectCharacter(quiz);
+  }, [quiz, quizMode]);
+
+  useEffect(() => {
+    if (quizMode && quiz.length === 0) {
+      const filtered = hiraganaChart.filter((_, index) => selected[index] !== false);
+      const filteredKeys = filtered.flat().map(pair => pair[0]);
+      setQuiz(filteredKeys);
+      setRemaining(filteredKeys.length);
+      setCurrentPair(null);
     }
-  },[selected])
+  }, [quiz, quizMode, selected]);
 
+  useEffect(() => {
+    if (!inputValue || !currentPair) return;
+    const answer = hiraganaToRomanji[currentPair];
+    if (inputValue.length === answer.length) {
+      if (inputValue === answer) {
+        setInputValue('');
+        const newChart = quiz.filter((_, i) => i !== randomIndex);
+        setQuiz(newChart);
+        setRemaining(newChart.length);
+        setRevealStatus(false);
+        if (newChart.length > 0) selectCharacter(newChart);
+        else setCurrentPair(null);
+      } else setInputValue('');
+    }
+  }, [inputValue]);
 
+  useEffect(() => {
+    if (!quizMode) return;
+    const handleSpace = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setRevealStatus(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleSpace);
+    return () => window.removeEventListener('keydown', handleSpace);
+  }, [quizMode]);
 
-  const Row = ({ chars, isOn, onToggle}) => {
-     const basePattern = ['a', 'i', 'u', 'e', 'o'];
+  // Each column displays in top-to-bottom vowel order
+  const Column = () => {
+    const basePattern = ['a', 'i', 'u', 'e', 'o'];
 
     return (
-      <div className="grid grid-rows-6 gap-2 min-w-[100px] items-center">
+      <div className="flex flex-nowrap overflow-x-auto gap-4 p-4">
+        {hiraganaRomanji.map((row, colIndex) => {
+          const isOn = selected[colIndex];
 
-        {/* Section Label (like K, S, T...) */}
-        <div className="text-center font-bold text-lg text-gray-400">
-          {Object.values(chars)[0][0].toUpperCase()}
-        </div>
-
-        {/* Centered Toggle Switch */}
-        <div className="flex justify-center">
-          <div
-            onClick={() => onToggle()}
-            className={`relative w-10 h-5 rounded-full cursor-pointer transition-colors duration-300 ${
-              isOn ? 'bg-green-500' : 'bg-gray-500'
-            }`}
-          >
-            <div
-              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${
-                isOn ? 'translate-x-5' : ''
-              }`}
-            ></div>
-          </div>
-        </div>
-
-        {/* Character Rows */}
-        {basePattern.map((vowel, i) => {
-          const match = Object.entries(chars).find(([jp, rom]) =>
-            rom.endsWith(vowel)
-          );
+          // Check if this is the ん column
+          const isNColumn = Object.values(row).includes('n');
 
           return (
-            <div
-              key={i}
-              className="bg-gray-900 text-white p-2 text-center rounded transition-opacity duration-300 flex flex-col items-center"
-              style={{ opacity: isOn ? 1 : 0.15 }}
-            >
-              {match ? (
-                <>
-                  <span className="text-2xl mb-1 text-yellow-100">{match[0]}</span> {/* Hiragana */}
-                  <span className="text-sm text-gray-400">{match[1]}</span> {/* Romaji */}
-                </>
-              ) : (
-                <span>&nbsp;</span> // keeps spacing even if empty
-              )}
+            <div key={colIndex} className="grid grid-rows-7 gap-1 min-w-[50px] w-full max-w-[90px] text-center">
+              {/* Column title */}
+              <div className="font-bold text-gray-400 text-sm sm:text-base">{columnTitles[colIndex]}</div>
+
+              {/* Toggle */}
+              <div className="flex justify-center">
+                <div
+                  onClick={() => handleToggle(colIndex)}
+                  className={`relative w-10 sm:w-12 h-6 sm:h-7 rounded-full cursor-pointer transition-colors duration-300 ${
+                    isOn ? 'bg-green-500' : 'bg-gray-500'
+                  }`}
+                >
+                  <div
+                    className={`absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-300 ${
+                      isOn ? 'translate-x-4 sm:translate-x-5' : ''
+                    }`}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Hiragana characters */}
+              {isNColumn
+                ? // For the ん column: show 'ん' at top, rest invisible
+                  [0, 1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="bg-gray-900 text-white py-[2px] rounded transition-opacity duration-300 flex flex-col items-center"
+                      style={{ opacity: isOn ? 1 : 0.2 }}
+                    >
+                      {i === 0 ? (
+                        <>
+                          <span className="text-lg sm:text-xl text-yellow-100 leading-none">ん</span>
+                          <span className="text-[10px] sm:text-xs text-gray-400">n</span>
+                        </>
+                      ) : (
+                        <span className="invisible">.</span>
+                      )}
+                    </div>
+                  ))
+                : // For other columns: use normal vowel matching
+                  basePattern.map((vowel, i) => {
+                    const match = Object.entries(row).find(([_, rom]) => rom.endsWith(vowel));
+                    return (
+                      <div
+                        key={i}
+                        className="bg-gray-900 text-white py-[2px] rounded transition-opacity duration-300 flex flex-col items-center"
+                        style={{ opacity: isOn ? 1 : 0.2 }}
+                      >
+                        {match ? (
+                          <>
+                            <span className="text-lg sm:text-xl text-yellow-100 leading-none">{match[0]}</span>
+                            <span className="text-[10px] sm:text-xs text-gray-400">{match[1]}</span>
+                          </>
+                        ) : (
+                          <span className="invisible">.</span>
+                        )}
+                      </div>
+                    );
+                  })}
             </div>
           );
         })}
@@ -148,166 +222,46 @@ const HiraganaAlphabet = () => {
     );
   };
 
-  const Column = () => {
+  if (quizMode) {
     return (
-      <div className="flex flex-nowrap overflow-x-auto gap-4 p-4">
-        {hiraganaRomanji.map((row, i) => (
-          <Row key={i} chars={row}  isOn={selected[i]} onToggle={() => handleToggle(i)}/>
-        ))}
-      </div>
-    );
-  };
-
-  const selectCharacter = (data) => {
-    if (!data || data.length === 0) {
-      // Reset quiz
-      const filtered = hiraganaChart.filter((_, index) => selected[index] !== false);
-      const filteredKeys = filtered.flat().map(pair => pair[0]);
-      setQuiz(filteredKeys);
-      setRemaining(filteredKeys.length);
-      console.log("reset");
-      return;
-    }
-
-    const index = getRandomInt(data.length);
-    setRandomIndex(index);
-    setCurrentPair(data[index]);
-  };
-
-  useEffect(()=>{
-
-    if(quiz){ 
-      for(let i=0; i<quiz.length; i++ ){
-
-        if(quiz[i].length==0){
-
-          quiz.splice(i,1)
-        }
-      }
-    }
-  },[quiz])
- 
-  useEffect(() => {
-    if (quizMode && quiz.length > 0) {
-      selectCharacter(quiz);
-    }
-  }, [quizMode]);
- 
-  
-
-  const reveal = () => {
-    setRevealStatus(prev => !prev);
-  };
-  
-  const [revealStatus,setRevealStatus] = useState(false)
-  useEffect(() => {
-    if (inputValue && currentPair) {
-      const answer = hiraganaToRomanji[currentPair];
-      if (inputValue.length === answer.length) {
-        if (inputValue === answer) {
-          console.log("✅ correct");
-          setInputValue("");
-
-          // remove current character from quiz
-          const newChart = quiz.filter((_, i) => i !== randomIndex);
-          setQuiz(newChart);
-          setRemaining(newChart.length);
-          setRevealStatus(false);
-
-          // choose next or reset
-          if (newChart.length > 0) {
-            selectCharacter(newChart);
-          } else {
-            selectCharacter([]); // triggers reset
-          }
-        } else {
-          console.log("❌ wrong");
-          setInputValue("");
-        }
-      }
-    }
-  }, [inputValue]);
-
-  useEffect(() => {
-    if (!quizMode) return; // 🚫 don't add listener if quizMode is false
-
-    const handleSpace = (e) => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        reveal();
-      }
-    };
-
-    window.addEventListener('keydown', handleSpace);
-    console.log('Spacebar listener active');
-
-    // 🧹 cleanup when quizMode turns false or component unmounts
-    return () => {
-      window.removeEventListener('keydown', handleSpace);
-      console.log('Spacebar listener removed');
-    };
-  }, [quizMode]); // runs whenever quizMode changes
-
-  if(quizMode){
-    return(
       <>
-      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto h-auto rounded-2xl'>remaining: {remaining}</p>
-
-      <p className='text-4xl font-semibold text-center my-4 p-4 w-64 mx-auto h-20'>
-        {revealStatus ? hiraganaToRomanji[currentPair] : currentPair}
-      </p>
-      
-      <input type="text" className='block  bg-gray-700 text-center rounded-2xl w-64 mx-auto h-auto text-2xl p-4'
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-
-      />
-      
-      {revealStatus==true?
-      (
-      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-2 w-24 mx-auto h-auto rounded-2xl'
-        onClick={()=>{reveal()}}
-      >
-        hide
-      </p>
-
-      ):(
-
-      <p className='text-2xl font-semibold text-center my-4 bg-gray-600 p-2 w-24 mx-auto h-auto rounded-2xl'
-        onClick={()=>{reveal()}}
-      >
-        reveal
-      </p>
-      )
-
-      }
-       
+        <p className="text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto rounded-2xl">
+          Remaining: {remaining}
+        </p>
+        <p className="text-4xl font-semibold text-center my-4 p-4 w-64 mx-auto h-20">
+          {revealStatus ? hiraganaToRomanji[currentPair] : currentPair}
+        </p>
+        <input
+          type="text"
+          className="block bg-gray-700 text-center rounded-2xl w-64 mx-auto text-2xl p-4"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value.toLowerCase())}
+          autoFocus
+        />
+        <p
+          className="text-2xl font-semibold text-center my-4 bg-gray-600 p-2 w-24 mx-auto rounded-2xl cursor-pointer"
+          onClick={() => setRevealStatus(prev => !prev)}
+        >
+          {revealStatus ? 'hide' : 'reveal'}
+        </p>
+        <button
+          onClick={() => setQuizMode(false)}
+          className="bg-red-900 text-white px-6 py-2 rounded-2xl text-xl block mx-auto mt-4"
+        >
+          Exit Quiz
+        </button>
       </>
-    )
+    );
   }
-
-  function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
-  }
-
-
 
   return (
     <>
-      <div className="text-2xl font-semibold text-center my-4 text-gray-200">
-        Hiragana Alphabet
-      </div>
+      <div className="text-2xl font-semibold text-center my-4 text-gray-200">Hiragana Alphabet</div>
       <Column />
-
-      <button className='text-2xl font-semibold text-center my-4 bg-green-600 p-4 rounded-2xl'
-        onClick={() => {
-          if (!quizMode) {
-            // Before entering quiz mode, select the first character
-            selectCharacter(quiz);
-          }
-          setQuizMode(!quizMode);
-        }}      
-        >
+      <button
+        className="text-2xl font-semibold text-center my-4 bg-green-600 p-4 rounded-2xl block mx-auto"
+        onClick={() => !quizMode && startQuiz()}
+      >
         quizMode
       </button>
     </>
