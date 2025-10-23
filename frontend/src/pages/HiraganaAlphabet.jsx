@@ -73,6 +73,34 @@ const HiraganaAlphabet = () => {
   const [randomIndex, setRandomIndex] = useState(null);
   const [revealStatus, setRevealStatus] = useState(false);
 
+
+
+
+  const [incorrect, setIncorrect] = useState(0);
+  const [totalAttempts, setTotalAttempts] = useState(0);
+  
+  useEffect(() => {
+    if (!inputValue || !currentPair) return;
+    const answer = hiraganaToRomanji[currentPair];
+    if (inputValue.length === answer.length) {
+      setTotalAttempts(prev => prev + 1); // increment total attempts
+      if (inputValue === answer) {
+        setInputValue('');
+        const newChart = quiz.filter((_, i) => i !== randomIndex);
+        setQuiz(newChart);
+        setRemaining(newChart.length);
+        setRevealStatus(false);
+        if (newChart.length > 0) selectCharacter(newChart);
+        else setCurrentPair(null);
+      } else {
+        setInputValue('');
+        setIncorrect(prev => prev + 1); // increment incorrect counter
+      }
+    }
+  }, [inputValue]);
+
+
+
   const getRandomInt = (max) => Math.floor(Math.random() * max);
 
   const handleToggle = (index) => {
@@ -229,10 +257,18 @@ const HiraganaAlphabet = () => {
 
   if (quizMode) {
     return (
-      <>
-        <p className="text-2xl font-semibold text-center my-4 bg-gray-600 p-4 w-64 mx-auto rounded-2xl">
-          Remaining: {remaining}
-        </p>
+      <> 
+        <div className="flex justify-center gap-4 my-4">
+          <p className="text-2xl font-semibold bg-gray-600 p-4 rounded-2xl text-center">
+            Remaining: {remaining}
+          </p>
+          <p className="text-2xl font-semibold bg-gray-600 p-4 rounded-2xl text-center">
+            Accuracy: {totalAttempts ? Math.round(((totalAttempts - incorrect) / totalAttempts) * 100) : 100}%
+          </p>
+          <p className="text-2xl font-semibold bg-gray-600 p-4 rounded-2xl text-center">
+            Incorrect: {incorrect}
+          </p>
+        </div>
         <p className="text-4xl font-semibold text-center my-4 p-4 w-64 mx-auto h-20">
           {revealStatus ? hiraganaToRomanji[currentPair] : currentPair}
         </p>
