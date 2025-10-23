@@ -181,7 +181,7 @@ const HiraganaAlphabet = () => {
     const basePattern = ['a', 'i', 'u', 'e', 'o'];
 
     return (
-      <div className="flex flex-nowrap overflow-x-auto gap-4 p-4">
+    <div className="flex justify-center gap-1 p-4 overflow-x-auto">
         {hiraganaRomanji.map((row, colIndex) => {
           const isOn = selected[colIndex];
 
@@ -194,16 +194,16 @@ const HiraganaAlphabet = () => {
               <div className="font-bold text-gray-400 text-sm sm:text-base">{columnTitles[colIndex]}</div>
 
               {/* Toggle */}
-              <div className="flex justify-center">
+              <div className="flex justify-center items-center py-1">
                 <div
                   onClick={() => handleToggle(colIndex)}
-                  className={`relative w-10 sm:w-12 h-6 sm:h-7 rounded-full cursor-pointer transition-colors duration-300 ${
+                  className={`relative w-12 h-6 rounded-full cursor-pointer transition-colors duration-300 ${
                     isOn ? 'bg-green-500' : 'bg-gray-500'
                   }`}
                 >
                   <div
-                    className={`absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform duration-300 ${
-                      isOn ? 'translate-x-4 sm:translate-x-5' : ''
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-300 ${
+                      isOn ? 'translate-x-6' : ''
                     }`}
                   ></div>
                 </div>
