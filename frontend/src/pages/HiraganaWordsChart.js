@@ -1,34 +1,57 @@
-export const hiraganaWordsChart = [
-  // Greetings
-  [['こんにちは', 'hello'], ['おはよう', 'good morning'], ['こんばんは', 'good evening'], ['さようなら', 'goodbye'], ['ありがとう', 'thank you']],
-
-  // Common expressions
-  [['はい', 'yes'], ['いいえ', 'no'], ['すみません', 'excuse me/sorry'], ['おねがいします', 'please'], ['ごめんなさい', 'sorry']],
-
-  // People / Pronouns
-  [['わたし', 'I/me'], ['あなた', 'you'], ['かれ', 'he'], ['かのじょ', 'she'], ['ともだち', 'friend']],
-
-  // Numbers
-  [['いち', 'one'], ['に', 'two'], ['さん', 'three'], ['よん', 'four'], ['ご', 'five']],
-
-  // Nature
-  [['やま', 'mountain'], ['かわ', 'river'], ['はな', 'flower'], ['そら', 'sky'], ['みず', 'water']],
-
-  // Food
-  [['ごはん', 'rice/meal'], ['みそしる', 'miso soup'], ['さかな', 'fish'], ['にく', 'meat'], ['やさい', 'vegetable']],
-
-  // Time / Days
-  [['きょう', 'today'], ['あした', 'tomorrow'], ['きのう', 'yesterday'], ['とき', 'time'], ['じかん', 'hour']],
-
-  // School / Study
-  [['がっこう', 'school'], ['せんせい', 'teacher'], ['がくせい', 'student'], ['ほん', 'book'], ['えんぴつ', 'pencil']],
-
-  // Places
-  [['いえ', 'house'], ['みせ', 'store'], ['まち', 'town'], ['えき', 'station'], ['くるま', 'car']],
-
-  // Verbs (plain forms)
-  [['たべる', 'eat'], ['のむ', 'drink'], ['みる', 'see/watch'], ['いく', 'go'], ['くる', 'come']],
-
-  // Family
-  [['ちち', 'father'], ['はは', 'mother'], ['あに', 'older brother'], ['あね', 'older sister'], ['いもうと', 'younger sister']]
-];
+export const hiraganaWords = {
+    こんにちは: { romaji: 'konnichiwa', english: 'hello' },
+    おはよう: { romaji: 'ohayou', english: 'good morning' },
+    こんばんは: { romaji: 'konbanwa', english: 'good evening' },
+    さようなら: { romaji: 'sayounara', english: 'goodbye' },
+    ありがとう: { romaji: 'arigatou', english: 'thank you' },
+    はい: { romaji: 'hai', english: 'yes' },
+    いいえ: { romaji: 'iie', english: 'no' },
+    すみません: { romaji: 'sumimasen', english: 'excuse me / sorry' },
+    おねがいします: { romaji: 'onegaishimasu', english: 'please' },
+    ごめんなさい: { romaji: 'gomennasai', english: 'I’m sorry' },
+    わたし: { romaji: 'watashi', english: 'I / me' },
+    あなた: { romaji: 'anata', english: 'you' },
+    かれ: { romaji: 'kare', english: 'he' },
+    かのじょ: { romaji: 'kanojo', english: 'she' },
+    ともだち: { romaji: 'tomodachi', english: 'friend' },
+    いち: { romaji: 'ichi', english: 'one' },
+    に: { romaji: 'ni', english: 'two' },
+    さん: { romaji: 'san', english: 'three' },
+    よん: { romaji: 'yon', english: 'four' },
+    ご: { romaji: 'go', english: 'five' },
+    やま: { romaji: 'yama', english: 'mountain' },
+    かわ: { romaji: 'kawa', english: 'river' },
+    はな: { romaji: 'hana', english: 'flower' },
+    そら: { romaji: 'sora', english: 'sky' },
+    みず: { romaji: 'mizu', english: 'water' },
+    ごはん: { romaji: 'gohan', english: 'rice / meal' },
+    みそしる: { romaji: 'misoshiru', english: 'miso soup' },
+    さかな: { romaji: 'sakana', english: 'fish' },
+    にく: { romaji: 'niku', english: 'meat' },
+    やさい: { romaji: 'yasai', english: 'vegetables' },
+    きょう: { romaji: 'kyou', english: 'today' },
+    あした: { romaji: 'ashita', english: 'tomorrow' },
+    きのう: { romaji: 'kinou', english: 'yesterday' },
+    とき: { romaji: 'toki', english: 'time' },
+    じかん: { romaji: 'jikan', english: 'hour / time' },
+    がっこう: { romaji: 'gakkou', english: 'school' },
+    せんせい: { romaji: 'sensei', english: 'teacher' },
+    がくせい: { romaji: 'gakusei', english: 'student' },
+    ほん: { romaji: 'hon', english: 'book' },
+    えんぴつ: { romaji: 'enpitsu', english: 'pencil' },
+    いえ: { romaji: 'ie', english: 'house' },
+    みせ: { romaji: 'mise', english: 'shop' },
+    まち: { romaji: 'machi', english: 'town' },
+    えき: { romaji: 'eki', english: 'station' },
+    くるま: { romaji: 'kuruma', english: 'car' },
+    たべる: { romaji: 'taberu', english: 'to eat' },
+    のむ: { romaji: 'nomu', english: 'to drink' },
+    みる: { romaji: 'miru', english: 'to see / watch' },
+    いく: { romaji: 'iku', english: 'to go' },
+    くる: { romaji: 'kuru', english: 'to come' },
+    ちち: { romaji: 'chichi', english: 'father' },
+    はは: { romaji: 'haha', english: 'mother' },
+    あに: { romaji: 'ani', english: 'older brother' },
+    あね: { romaji: 'ane', english: 'older sister' },
+    いもうと: { romaji: 'imouto', english: 'younger sister' }
+};
